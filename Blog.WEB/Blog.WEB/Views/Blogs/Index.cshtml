@@ -1,0 +1,12 @@
+﻿@model IEnumerable<Blog.Models.BlogModel>
+
+@{
+    ViewBag.Title = "Blogs";
+}
+
+<ul class="list-group">
+    @foreach (var item in Model)
+    {
+        <li class="list-group-item">@Html.ActionLink(item.Title, "Index", "Post", new { blogId = item.ID }, null)<span class="badge">@item.Posts.Count</span></li>
+    }
+</ul>

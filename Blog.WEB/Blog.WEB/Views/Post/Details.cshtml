@@ -1,0 +1,62 @@
+﻿@model Blog.Models.PostModel
+
+@{
+    ViewBag.Title = Model.Title;
+}
+
+<h2>Details</h2>
+
+<div>
+    <h2>Model.Title</h2>
+    <h5><span class="glyphicon glyphicon-time"></span> Post by @Model.Blog.Bloger.UserName, on @Model.DateTime.Month @Model.DateTime.Day, @Model.DateTime.Year.</h5>
+    <h5><span class="label label-danger">Food</span> <span class="label label-primary">Ipsum</span></h5><br>
+    <p>@Html.DisplayFor(modelItem => Model.Body)</p>
+</div>
+@if (Model.Blog.Bloger.UserName == User.Identity.Name)
+{
+    <div class="btn-group">
+        @Html.ActionLink("Edit", "Edit", new { id = Model.ID }, new { @class = "btn btn-primary" })
+        @Html.ActionLink("Delete", "Delete", new { id = Model.ID }, new { @class = "btn btn-primary" })
+        @Html.ActionLink("Back to List", "Index", new { blogId = Model.BlogID }, new { @class = "btn btn-primary" })
+    </div>
+}
+
+<hr />
+<br /><br />
+<h4>Leave a Comment:</h4>
+@using (Html.BeginForm("AddComment", "Post", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    <div class="form-horizontal">
+        <hr />
+        <div class="form-group">
+            <div class="col-md-10">
+                @Html.TextArea("Body", "", 3, 10, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+        </div>
+        @Html.Hidden("DateTime", DateTime.Now)
+        @Html.Hidden("UserID", Model.Blog.BlogerID)
+        @Html.Hidden("PostID", Model.ID)
+        <button type="submit" class="btn btn-success">Submit</button>
+    </div>
+}
+<br><br>
+
+<p><span class="badge"></span> Comments:</p><br>
+
+<div class="row">
+    @foreach (var comment in Model.Comments)
+    {
+        <hr/>
+        <div class="col-sm-2 text-center">
+            <img src="@Href("~/Content/ava.png")" class="img-circle" height="65" width="65" alt="Avatar">
+        </div>
+        <div class="col-sm-10">
+            <h4><small>@comment.User.UserName, on @comment.DateTime.Date @*@comment.DateTime.Day, @comment.DateTime.Year*@</small></h4>
+            <p>@comment.Body</p>
+            <br>
+            @Html.ActionLink("Delete", "DeleteComment", new { id = comment.ID, postID = Model.ID }, new { @class = "btn btn-default" })
+        </div>
+        
+    }
+</div>

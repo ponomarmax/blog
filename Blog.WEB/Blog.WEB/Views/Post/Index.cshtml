@@ -1,0 +1,17 @@
+﻿@using Blog.Controllers
+@using PagedList
+
+@model IEnumerable<Blog.Models.PostModel>
+
+@{
+    ViewBag.Title = "Posts";
+}
+
+<h4><small>RECENT POSTS</small></h4>
+
+@if (Model != null && Model.Count() != 0)
+{
+    @Html.Partial("ListPost", Model.ToPagedList((int)ViewBag.Page, (int)ViewBag.PageSize))
+}
+
+

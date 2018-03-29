@@ -1,0 +1,48 @@
+﻿@using PagedList.Mvc
+
+@model PagedList.IPagedList<Blog.Models.UserModel>
+
+@{
+    /**/
+
+    ViewBag.Title = "ListUsers";
+}
+
+<h2>ListUsers</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<ul class="list-group">
+    @foreach (var item in Model)
+    {
+        <li class="list-group-item">@Html.ActionLink(item.UserName,"Details","Users",new { id = item.Id },null)<span class="badge">@item.Blogs.Count</span></li>
+    }
+</ul>
+@*<table class="table">
+    
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Email)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Password)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UserName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Role)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                @Html.ActionLink("Details", "Details", new { id = item.Id }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+            </td>
+        </tr>
+    }
+
+</table>*@

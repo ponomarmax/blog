@@ -1,0 +1,117 @@
+﻿@using Microsoft.AspNet.Identity;
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+</head>
+<body>
+    @*<div class="navbar navbar-inverse navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    @Html.ActionLink("Application name", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+                </div>
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        <li>@Html.ActionLink("Home", "Index", "Home")</li>
+                        <li>@Html.ActionLink("About", "About", "Home")</li>
+                        <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        @if (!User.Identity.IsAuthenticated)
+                        {
+                            <li>@Html.ActionLink("Войти", "Login", "Account")</li>
+                            <li>@Html.ActionLink("Регистрация", "Register", "Account")</li>
+                        }
+                        else
+                        {
+                            <li>
+                                <a>Привет @User.Identity.Name</a>
+                            </li>
+                            <li>@Html.ActionLink("Выход", "Logout", "Account")</li>
+                        }
+
+                    </ul>
+                </div>
+            </div>
+        </div>*@
+    <div class="row">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            @Html.ActionLink("Application name", "Index", "Blogs", new { area = "" }, new { @class = "navbar-brand" })
+        </div>
+    </div>
+    <br />
+    <div class="container-fluid">
+
+        <div class="row content">
+            <div class="col-sm-3 sidenav">
+                @*<h4>@Html.ActionLink("MAP's Blog", "Index", "Blogs", new { area = "" }, new { @class = "navbar-brand" })</h4>*@
+
+                <ul class="nav nav-pills nav-stacked">
+                    <li>@Html.ActionLink("Home", "Index", "Blogs")</li>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <li>@Html.ActionLink("All users", "Index", "Users")</li>
+                        <li><a href="#section2">My blogs</a></li>
+                        <li>@Html.ActionLink("Create blog", "Create", "Blogs", new { id = User.Identity.GetUserId() }, null)</li>
+                        <li>@Html.ActionLink("Create post", "Create", "Post")</li>
+                    }
+                </ul><br>
+                <ul class="nav nav-pills nav-stacked">
+                    @if (!User.Identity.IsAuthenticated)
+                    {
+                        <li>@Html.ActionLink("Login", "Login", "Account")</li>
+                        <li>@Html.ActionLink("Register", "Register", "Account")</li>
+                    }
+                    else
+                    {
+                        <li>
+                            <a>Hello @User.Identity.Name</a>
+                        </li>
+                        <li>@Html.ActionLink("Logout", "Logout", "Account")</li>
+                    }
+
+                </ul>
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Search Blog..">
+                    <span class="input-group-btn">
+                        <button class="btn btn-default" type="button">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </span>
+                </div>
+            </div>
+            @*<div class="container body-content">*@
+            <div class="col-sm-9">
+                @RenderBody()
+            </div>
+            <hr />
+
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <footer>
+            <p>&copy; @DateTime.Now.Year - My Blogs Site</p>
+        </footer>
+    </div>
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+
+</body>
+</html>
