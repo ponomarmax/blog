@@ -24,7 +24,7 @@ namespace Blog.App_Start
 
         private IUserService CreateUserService()
         {
-            return serviceCreator.userService;
+            return serviceCreator.UserService("Blog");
         }
     }
 }

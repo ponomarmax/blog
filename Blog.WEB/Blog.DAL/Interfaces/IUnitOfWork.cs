@@ -18,7 +18,7 @@ namespace Blog.DAL.Interfaces
 
         ApplicationRoleManager roleRepository { get; }
         ApplicationUserManager userRepository { get; }
-
+        void Save();
         Task SaveAsync();
     }
 }

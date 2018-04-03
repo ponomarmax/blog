@@ -12,37 +12,12 @@ using System.Threading.Tasks;
 
 namespace Blog.BLL.Services
 {
-    public class PostService : IPostService
+    public class PostService :Service, IPostService
     {
-        IMapper mapperBusinessToDB, mapperDBToBusiness;
-        IUnitOfWork Database { get; set; }
-        public PostService(IUnitOfWork unitOfWork)
+        public PostService(IUnitOfWork unitOfWork) : base(unitOfWork)
         {
-            Database = unitOfWork;
-            var config = new MapperConfiguration(cfg =>
-            {
-                cfg.CreateMap<Blogs, BlogDTO>().PreserveReferences();
-                cfg.CreateMap<Comments, CommentDTO>().PreserveReferences();
-                cfg.CreateMap<Tags, TagDTO>().PreserveReferences();
-                cfg.CreateMap<Posts, PostDTO>().PreserveReferences();
-                cfg.CreateMap<User, UserDTO>().PreserveReferences()
-                .ForMember(dest => dest.Password, opt => opt.Ignore())
-                .ForMember(dest => dest.Role, opt => opt.Ignore());
-            });
-            config.AssertConfigurationIsValid();
-            mapperDBToBusiness = config.CreateMapper();
-
-            config = new MapperConfiguration(cfg =>
-            {
-                cfg.CreateMap<BlogDTO, Blogs>().PreserveReferences();
-                cfg.CreateMap<PostDTO, Posts>().PreserveReferences();
-                cfg.CreateMap<UserDTO, User>().PreserveReferences().ForAllOtherMembers(dest => dest.Ignore());
-                cfg.CreateMap<CommentDTO, Comments>().PreserveReferences();
-                cfg.CreateMap<TagDTO, Tags>().PreserveReferences();
-            });
-            config.AssertConfigurationIsValid();
-            mapperBusinessToDB = config.CreateMapper();
         }
+
         public void Create(PostDTO post,string tags)
         {
             

@@ -48,14 +48,10 @@ namespace Blog3AAA.Controllers
             mapperViewToBusiness = config.CreateMapper();
             ViewBag.PageSize = pageSize;
 
-            //mapperBusinessToView = new MapperConfiguration(cfg => cfg.CreateMap<PostDTO, PostModel>()).CreateMapper();
-            //mapperBlog = new MapperConfiguration(cfg => cfg.CreateMap<BlogDTO, BlogModel>()).CreateMapper();
-            //mapperViewToBusiness = new MapperConfiguration(cfg => cfg.CreateMap<PostModel, PostDTO>()).CreateMapper();
+            
         }
 
-        int pageSize = 2; // количество объектов на страницу
-        //public bool IsAdmin { get { return true;/* Session["IsAdmin"] != null && (bool)Session["IsAdmin"];*/} }
-        // GET: Posts
+        int pageSize = 2; 
         public ActionResult Index(int? blogId, int? tagId, int page = 1)
         {
             IEnumerable<PostModel> posts;

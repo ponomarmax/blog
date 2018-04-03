@@ -12,37 +12,10 @@ using System.Threading.Tasks;
 
 namespace Blog.BLL.Services
 {
-    public class BlogService : IBlogService
+    public class BlogService :Service, IBlogService
     {
-        IMapper mapperBusinessToDB, mapperDBToBusiness;
-        IUnitOfWork Database { get; set; }
-        public BlogService(IUnitOfWork unitOfWork)
-        {
-            Database = unitOfWork;
-            var config = new MapperConfiguration(cfg =>
-            {
-                cfg.CreateMap<Blogs, BlogDTO>().PreserveReferences();
-                cfg.CreateMap<Comments, CommentDTO>().PreserveReferences();
-                cfg.CreateMap<Tags, TagDTO>().PreserveReferences();
-                cfg.CreateMap<Posts, PostDTO>().PreserveReferences();
-                cfg.CreateMap<User, UserDTO>().PreserveReferences()
-                .ForMember(dest => dest.Password, opt => opt.Ignore())
-                .ForMember(dest => dest.Role, opt => opt.Ignore());
-            });
-            config.AssertConfigurationIsValid();
-            mapperDBToBusiness = config.CreateMapper();
+        public BlogService(IUnitOfWork unitOfWork) : base(unitOfWork) { }
 
-            config = new MapperConfiguration(cfg =>
-            {
-                cfg.CreateMap< BlogDTO, Blogs>().PreserveReferences();
-                cfg.CreateMap<PostDTO, Posts>().PreserveReferences();
-                cfg.CreateMap<UserDTO, User>().PreserveReferences().ForAllOtherMembers(dest=>dest.Ignore());
-                cfg.CreateMap<CommentDTO,Comments >().PreserveReferences();
-                cfg.CreateMap<TagDTO,Tags>().PreserveReferences();
-            });
-            config.AssertConfigurationIsValid();
-            mapperBusinessToDB = config.CreateMapper();
-        }
         public void  Create(BlogDTO blog)
         {
             User user = Database.userRepository.Users.Where(u=>u.Email==blog.BlogerEmail).First();
@@ -68,14 +41,6 @@ namespace Blog.BLL.Services
 
         public IEnumerable<BlogDTO> GetByName(string name)
         {
-
-
-            //    new MapperConfiguration(cfg => cfg.CreateMap<Blogs, BlogDTO>().
-            //ForMember(dest=>dest.Posts, opt=>opt.MapFrom(src=>src.Posts)).
-            //ForMember(dest => dest.Bloger, opt => opt.MapFrom(src => src.Bloger)).
-            //ForMember(dest => dest.Bloger.Password, opt => opt.Ignore()).
-            //ForMember(dest => dest.Bloger.Role, opt => opt.Ignore())).CreateMapper();
-
             return mapperDBToBusiness.Map<IEnumerable<BlogDTO>>(Database.blogRepository.GetByName(name));
         }
 

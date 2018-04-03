@@ -15,13 +15,23 @@
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         @Html.HiddenFor(model => model.Id)
-
         @if (!User.IsInRole("admin"))
         {
             <div class="form-group">
-                @Html.LabelFor(model => model.Role, htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
-                    @Html.DropDownList("Role", new SelectList(new string[] { "admin", "user" }), "Select role", new { @class = "form-control" })
+                    @if (ViewBag.roles != null && ViewBag.roles.Keys.Count != 0)
+                    {
+                        foreach (dynamic role in ViewBag.roles.Keys)
+                        {
+
+                            <div class="checkbox">
+                                <label>
+                                    @Html.CheckBox("selectedRoles", (bool)ViewBag.roles[role], new { value = role })
+                                    @role
+                                </label>
+                            </div>
+                        }
+                    }
                 </div>
             </div>
         }

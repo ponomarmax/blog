@@ -9,46 +9,14 @@ using Blog.DAL.Interfaces;
 using System.Collections.Generic;
 using AutoMapper;
 using System;
+using Blog.DAL.Repositories;
 
 namespace Blog.BLL.Services
 {
-    public class UserService : IUserService
+    public class UserService :Service, IUserService
     {
-        IUnitOfWork Database { get; set; }
-        IMapper mapperDBToBusiness, mapperBusinessToDB;
-        public UserService(IUnitOfWork uow)
+        public UserService(IUnitOfWork unitOfWork) : base(unitOfWork)
         {
-            Database = uow;
-            var config = new MapperConfiguration(cfg =>
-            {
-                cfg.CreateMap<Blogs, BlogDTO>().PreserveReferences();
-                cfg.CreateMap<Comments, CommentDTO>().PreserveReferences();
-                cfg.CreateMap<Tags, TagDTO>().PreserveReferences();
-                cfg.CreateMap<Posts, PostDTO>().PreserveReferences();
-                cfg.CreateMap<User, UserDTO>().PreserveReferences()
-                .ForMember(dest => dest.Password, opt => opt.Ignore())
-                .ForMember(dest => dest.Role, opt => opt.MapFrom<string>(user => {
-                    string role = "";
-                    foreach (var i in user.Roles)
-                    {
-                        role += Database.roleRepository.FindById(i.RoleId);
-                    }
-                    return role;
-                });
-            });
-            config.AssertConfigurationIsValid();
-            mapperDBToBusiness = config.CreateMapper();
-
-            config = new MapperConfiguration(cfg =>
-            {
-                cfg.CreateMap<BlogDTO, Blogs>().PreserveReferences();
-                cfg.CreateMap<PostDTO, Posts>().PreserveReferences();
-                cfg.CreateMap<UserDTO, User>().PreserveReferences().ForAllOtherMembers(dest => dest.Ignore());
-                cfg.CreateMap<CommentDTO, Comments>().PreserveReferences();
-                cfg.CreateMap<TagDTO, Tags>().PreserveReferences();
-            });
-            config.AssertConfigurationIsValid();
-            mapperBusinessToDB = config.CreateMapper();
         }
 
         public async Task<OperationDetails> Create(UserDTO userDto)
@@ -59,7 +27,7 @@ namespace Blog.BLL.Services
                 user = new User { Email = userDto.Email, UserName = userDto.Email };
                 await Database.userRepository.CreateAsync(user, userDto.Password);
                 // добавляем роль
-                await Database.userRepository.AddToRoleAsync(user.Id, userDto.Role);
+                await Database.userRepository.AddToRoleAsync(user.Id, "user");
                 // создаем профиль клиента
                 await Database.SaveAsync();
                 return new OperationDetails(true, "Регистрация успешно пройдена", "");
@@ -70,7 +38,25 @@ namespace Blog.BLL.Services
                 return new OperationDetails(false, "Пользователь с таким логином уже существует", "Email");
             }
         }
+        //public void Create(UserDTO userDto)
+        //{
+        //    User user = Database.userRepository.FindByEmail(userDto.Email);
+        //    if (user == null)
+        //    {
+        //        user = new User { Email = userDto.Email, UserName = userDto.Email };
+        //        Database.userRepository.Create(user, userDto.Password);
+        //        // добавляем роль
+        //         Database.userRepository.AddToRole(user.Id, "user");
+        //        // создаем профиль клиента
+        //         Database.Save();
+        //        //return new OperationDetails(true, "Регистрация успешно пройдена", "");
 
+        //    }
+        //    else
+        //    {
+        //        //return new OperationDetails(false, "Пользователь с таким логином уже существует", "Email");
+        //    }
+        //}
         public async Task<ClaimsIdentity> Authenticate(UserDTO userDto)
         {
             ClaimsIdentity claim = null;
@@ -82,22 +68,6 @@ namespace Blog.BLL.Services
                                             DefaultAuthenticationTypes.ApplicationCookie);
             return claim;
         }
-
-        //// начальная инициализация бд
-        //public async Task SetInitialData(UserDTO adminDto, List<string> roles)
-        //{
-        //    foreach (string roleName in roles)
-        //    {
-        //        var role = await Database.roleRepository.FindByNameAsync(roleName);
-        //        if (role == null)
-        //        {
-        //            role = new Role { Name = roleName };
-        //            await Database.roleRepository.CreateAsync(role);
-        //        }
-        //    }
-
-        //    await Create(adminDto);
-        //}
 
         public void Dispose()
         {
@@ -139,6 +109,8 @@ namespace Blog.BLL.Services
                 throw new NullReferenceException("user");
             Database.userRepository.Update(mapperBusinessToDB.Map<User>(user));
         }
+
+       
     }
 
 

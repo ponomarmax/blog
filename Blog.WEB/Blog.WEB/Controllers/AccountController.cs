@@ -84,7 +84,9 @@ namespace Blog.Controllers
                     Email = model.Email,
                     Password = model.Password,
                     UserName = model.Name,
-                    Role = "user"
+                    Blocked=false,
+                    Blogs = null
+                    //Role = new List<string>(new string[] { "user" })
                 };
                 OperationDetails operationDetails = await UserService.Create(userDto);
                 if (operationDetails.Succedeed)

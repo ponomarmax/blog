@@ -23,16 +23,16 @@ namespace Blog.DAL.Repositories
             commentRepository = new CommentRepository(db);
             roleRepository = new ApplicationRoleManager(new RoleStore<Role>(db));
             tagRepository = new TagRepository(db);
-            user = new ApplicationUserManager(new UserStore<User>(db));
+            userRepository = new ApplicationUserManager(new UserStore<User>(db));
         }
-        ApplicationUserManager user;
+        //ApplicationUserManager user;
         public PostRepository postRepository { get; }
         public BlogRepository blogRepository { get; }
         public CommentRepository commentRepository { get; }
         public TagRepository tagRepository { get; }
 
         public ApplicationRoleManager roleRepository { get; }
-        public ApplicationUserManager userRepository { get { return user; } }
+        public ApplicationUserManager userRepository { get; }
         public ApplicationContext db { get; private set; }
 
         public void Dispose()
@@ -62,6 +62,10 @@ namespace Blog.DAL.Repositories
         public async Task SaveAsync()
         {
             await db.SaveChangesAsync();
+        }
+        public void Save()
+        {
+            db.SaveChanges();
         }
     }
 }

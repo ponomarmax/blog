@@ -14,9 +14,11 @@ namespace Blog.BLL.Services
             postService = new PostService(unitOfWork);
             blogService = new BlogService(unitOfWork);
             commentService = new CommentService(unitOfWork);
+            roleService = new RoleService(unitOfWork);
         }
-
+        public IUserService UserService(string con) => new UserService(new IdentityUnitOfWork(con));
         public IUserService userService { get; private set; }
+        public IRoleService roleService { get; private set; }
 
         public IPostService postService { get; private set; }
 

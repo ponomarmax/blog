@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 
@@ -104,6 +105,18 @@ namespace Blog.WEB.Controllers
             if (id == null || id == "")
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             UserDTO userDTO = service.userService.GetById(id);
+            List<string> userRoles = service.roleService.GetRolesByUserId(id);
+            var allRoles = service.roleService.GetAll();
+            Dictionary<string, bool> dictionary = new Dictionary<string, bool>();
+            foreach (var role in allRoles)
+                dictionary.Add(role, userRoles.Contains(role));
+                
+            //foreach (var item in dictionary.Keys)
+            //{
+
+            //}
+            ViewBag.roles = dictionary;
+            
             if (userDTO == null)
                 return View("Error");
             UserModel user = mapperBusinessToView.Map<UserModel>(userDTO);
@@ -112,13 +125,16 @@ namespace Blog.WEB.Controllers
 
         // POST: Users/Edit/5
         [HttpPost]
-        public ActionResult Edit(UserModel user)
+        public ActionResult Edit(UserModel user,string [] selectedRoles)
         {
             try
             {
                 if (user == null)
                     return View("Error");
-                service.userService.Modify(mapperViewToBusiness.Map<UserDTO>(user));
+                if (selectedRoles == null)
+                    selectedRoles = new string[] { "user" };
+                 service.roleService.UpdateListRoles(selectedRoles, user.Id);
+                //service.userService.Modify(mapperViewToBusiness.Map<UserDTO>(user));
                 return RedirectToAction("Index");
             }
             catch

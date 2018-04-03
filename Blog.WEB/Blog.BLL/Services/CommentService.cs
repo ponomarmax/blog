@@ -12,16 +12,12 @@ using System.Threading.Tasks;
 
 namespace Blog.BLL.Services
 {
-    public class CommentService : ICommentService
+    public class CommentService :Service, ICommentService
     {
-        IMapper mapperBusinessToDB, mapperDBToBusiness;
-        IUnitOfWork Database { get; set; }
-        public CommentService(IUnitOfWork unitOfWork)
+        public CommentService(IUnitOfWork unitOfWork) : base(unitOfWork)
         {
-            Database = unitOfWork;
-            mapperBusinessToDB = new MapperConfiguration(cfg => cfg.CreateMap<CommentDTO, Comments>().PreserveReferences()).CreateMapper();
-            mapperDBToBusiness = new MapperConfiguration(cfg => cfg.CreateMap<Comments, CommentDTO>().PreserveReferences()).CreateMapper();
         }
+
         public void Create(CommentDTO comment)
         {
             Database.commentRepository.Create(mapperBusinessToDB.Map<Comments>(comment));
