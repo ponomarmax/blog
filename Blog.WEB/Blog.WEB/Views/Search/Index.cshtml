@@ -1,0 +1,20 @@
+﻿@using Blog.Controllers
+@using PagedList
+
+@model IEnumerable<Blog.Models.PostModel>
+
+@{
+    ViewBag.Title = "Posts";
+}
+
+
+
+@if (Model != null && Model.Count() != 0)
+{
+    <h4><small>RESULT BY SEARCH: @ViewBag.Search</small></h4>
+    @Html.Partial("ListPost", Model.ToPagedList((int)ViewBag.Page, (int)ViewBag.PageSize))
+}
+else
+{
+    <h4><small>Nothing is found:(</small></h4>
+}

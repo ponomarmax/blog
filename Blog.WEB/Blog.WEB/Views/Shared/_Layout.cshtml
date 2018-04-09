@@ -86,14 +86,19 @@
                     }
 
                 </ul>
+                @using (Html.BeginForm("Index", "Search"))
+                {
                 <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Search Blog..">
+                    @Html.Editor("word", new { htmlAttributes = new { @class = "form-control", placeholder = "Search Blog.." } })
                     <span class="input-group-btn">
-                        <button class="btn btn-default" type="button">
-                            <span class="glyphicon glyphicon-search"></span>
+                        <button class="btn btn-default" type="submit">
+                            <span class="glyphicon glyphicon-search">
+                            </span>
                         </button>
                     </span>
                 </div>
+                }
+
             </div>
             @*<div class="container body-content">*@
             <div class="col-sm-9">
