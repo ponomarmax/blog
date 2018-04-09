@@ -98,9 +98,7 @@ namespace Blog3AAA.Controllers
             return View(mapperBusinessToView.Map<IEnumerable<BlogModel>>(b));
         }
 
-        // POST: Post/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "ID,Title,DateTime,Body,BlogID")] PostModel post, string tags)

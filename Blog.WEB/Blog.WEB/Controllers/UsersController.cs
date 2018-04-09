@@ -6,6 +6,7 @@ using Blog.Models;
 using PagedList;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -110,13 +111,13 @@ namespace Blog.WEB.Controllers
             Dictionary<string, bool> dictionary = new Dictionary<string, bool>();
             foreach (var role in allRoles)
                 dictionary.Add(role, userRoles.Contains(role));
-                
+
             //foreach (var item in dictionary.Keys)
             //{
 
             //}
             ViewBag.roles = dictionary;
-            
+
             if (userDTO == null)
                 return View("Error");
             UserModel user = mapperBusinessToView.Map<UserModel>(userDTO);
@@ -125,22 +126,29 @@ namespace Blog.WEB.Controllers
 
         // POST: Users/Edit/5
         [HttpPost]
-        public ActionResult Edit(UserModel user,string [] selectedRoles)
+        public ActionResult Edit(UserModel user, string[] selectedRoles, HttpPostedFileBase uploadImage)
         {
-            try
+            //try
+            //{
+            if (user == null)
+                return View("Error");
+            if (selectedRoles == null)
+                selectedRoles = new string[] { "user" };
+            byte[] imageData = null;
+            using (var binaryReader = new BinaryReader(uploadImage.InputStream))
             {
-                if (user == null)
-                    return View("Error");
-                if (selectedRoles == null)
-                    selectedRoles = new string[] { "user" };
-                 service.roleService.UpdateListRoles(selectedRoles, user.Id);
-                //service.userService.Modify(mapperViewToBusiness.Map<UserDTO>(user));
-                return RedirectToAction("Index");
+                imageData = binaryReader.ReadBytes(uploadImage.ContentLength);
             }
-            catch
-            {
-                return View();
-            }
+            user.Photo = imageData;
+            //service.userService.Modify(mapperViewToBusiness.Map<UserDTO>(user));
+            service.roleService.UpdateListRoles(selectedRoles, user.Id);
+            service.userService.Modify(mapperViewToBusiness.Map<UserDTO>(user));
+            return RedirectToAction("Index");
+            //}
+            //catch
+            //{
+            //    return View();
+            //}
         }
 
         // GET: Users/Delete/5

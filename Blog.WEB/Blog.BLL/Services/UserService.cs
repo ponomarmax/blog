@@ -107,7 +107,12 @@ namespace Blog.BLL.Services
         {
             if (user == null)
                 throw new NullReferenceException("user");
-            Database.userRepository.Update(mapperBusinessToDB.Map<User>(user));
+
+
+            User userDB = Database.userRepository.FindById(user.Id);
+            userDB.Photo=user.Photo;
+            Database.userRepository.Update(userDB);
+            Database.Save();
         }
 
        

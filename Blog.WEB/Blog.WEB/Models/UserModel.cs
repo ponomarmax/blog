@@ -11,5 +11,6 @@ namespace Blog.Models
         //public List<string> Role { get; set; }
         public virtual ICollection<BlogModel> Blogs { get; set; }
         public bool Blocked { get; set; }
+        public byte[] Photo { get; set; }
     }
 }

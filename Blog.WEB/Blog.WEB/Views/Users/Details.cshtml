@@ -4,39 +4,56 @@
     ViewBag.Title = "Details";
 }
 
-<div>
-    <h2><span class="glyphicon glyphicon-user"></span>@Model.Email</h2>
-    <p>User has <span class="glyphicon glyphicon-book"></span>@Model.Blogs.Count blog(-s)</p>
-</div>
-
-<p>
-    @if (!User.IsInRole("admin"))
+<div class="row panel-default">
+    @if (Model.Photo != null)
     {
-        <div class="btn-group">
-            @Html.ActionLink("Edit", "Edit", new { id = Model.Id }, new { @class = "btn btn-primary" })
-            @*@Html.ActionLink("Delete", "Delete", new { id = Model.Id }, new { @class = "btn btn-primary" })*@
-            @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-primary" })
-            @using (Html.BeginForm("BlockUnblockUser", "Users", new { id = Model.Id }, FormMethod.Post))
-            {
-                @Html.AntiForgeryToken()
-
-                @*<div class="form-actions no-color">*@
-                if (Model.Blocked)
-                {
-                    <span class="glyphicon glyphicon-unchecked">
-                        <input type="submit" value='Unlock' class="btn btn-default" />
-                    </span>
-                }
-                else
-                {
-                    <span class="glyphicon glyphicon-lock">
-                        <input type="submit" value='Lock' class="btn btn-default" />
-                    </span>
-                }
-                @Html.ActionLink("Users", "Details", new { id = Model.Id })
-                @*</div>*@
-
-            }
+        <div class="col-md-3">
+            @Html.Raw("<img class='img-rounded' style='width:160px; height:120px;' src=\"data:image/jpeg;base64,"
+                                                                          + Convert.ToBase64String(Model.Photo) + "\" />")
         </div>
     }
-</p>
+    <div class=" col-md-3">
+        <h2><span class="glyphicon glyphicon-user"></span>@Model.Email</h2>
+        <h5>User has @Model.Blogs.Count blog(-s)  <span></span><span class="glyphicon glyphicon-book"></span></h5>
+    </div>
+</div>
+<div>
+
+</div>
+<div class="row panel-footer">
+    @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-primary" })
+    <hr />
+    @if (!User.IsInRole("admin"))
+    {
+        <div class=" panel-body">
+            <div class="btn-group">
+                @using (Html.BeginForm("BlockUnblockUser", "Users", new { id = Model.Id }, FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                    <label class="label-info">Additional admin features</label>
+                    <br />
+                    if (Model.Blocked)
+                    {
+                        <div class="btn-group">
+                            <button type="submit" class="btn btn-default">
+                                <span class="glyphicon glyphicon-unchecked"></span><span></span>
+                                Unlock
+                            </button>
+                            @Html.ActionLink("Edit", "Edit", new { id = Model.Id }, new { @class = "btn btn-primary" })
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="btn-group">
+                            <button type="submit" class="btn btn-default">
+                                <span class="glyphicon glyphicon-lock"></span><span></span>
+                                Lock
+                            </button>
+                            @Html.ActionLink("Edit", "Edit", new { id = Model.Id }, new { @class = "btn btn-primary" })
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    }
+</>

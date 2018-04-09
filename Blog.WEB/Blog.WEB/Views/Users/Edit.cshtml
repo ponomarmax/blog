@@ -6,17 +6,18 @@
 
 <h2>Edit</h2>
 
-@using (Html.BeginForm())
+@using (Html.BeginForm("Edit", "Users", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     @Html.AntiForgeryToken()
 
     <div class="form-horizontal">
-        <h4>UserModel</h4>
+
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         @Html.HiddenFor(model => model.Id)
         @if (!User.IsInRole("admin") && ViewBag.roles != null && ViewBag.roles.Keys.Count != 0)
         {
+            <h5>User's roles: </h5>
             <div class="form-group">
                 <div class="col-md-10">
 
@@ -32,14 +33,22 @@
 
                 </div>
             </div>
-            <div class="form-group">
-                <div class="col-md-offset-2 col-md-10">
-                    <input type="submit" value="Save" class="btn btn-default" />
-                </div>
+            <hr />
+            <h5>Update avatar: </h5>
+            <div class="editor-field">
+                <input type="file" name="uploadImage" />
             </div>
+             <hr />
+
+            <div class="btn-group">
+                <button type="submit" class="btn btn-default">
+                    <span class="glyphicon glyphicon-save"></span><span></span>
+                    Save
+                </button>
+                @Html.ActionLink("Back to List", "Index", "Users", null, new { @class = "btn btn-primary" })
+            </div>
+
         }
     </div>
 }
-<div class="btn-group">
-    @Html.ActionLink("Back to List", "Index","Users", null, new { @class = "btn btn-primary" })
-</div>
+

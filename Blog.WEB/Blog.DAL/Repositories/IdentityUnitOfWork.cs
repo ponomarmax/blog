@@ -14,7 +14,7 @@ namespace Blog.DAL.Repositories
 
     public class IdentityUnitOfWork : IUnitOfWork
     {
-
+        UserStore<User> store;
         public IdentityUnitOfWork(string connectionString = "Blog")
         {
             db = new ApplicationContext(connectionString);
@@ -23,7 +23,8 @@ namespace Blog.DAL.Repositories
             commentRepository = new CommentRepository(db);
             roleRepository = new ApplicationRoleManager(new RoleStore<Role>(db));
             tagRepository = new TagRepository(db);
-            userRepository = new ApplicationUserManager(new UserStore<User>(db));
+            store = new UserStore<User>(db);
+            userRepository = new ApplicationUserManager(store);
         }
         //ApplicationUserManager user;
         public PostRepository postRepository { get; }
@@ -65,6 +66,7 @@ namespace Blog.DAL.Repositories
         }
         public void Save()
         {
+            store.Context.SaveChanges();
             db.SaveChanges();
         }
     }
