@@ -11,44 +11,18 @@ using Blog.BLL.DTO;
 using Blog.BLL.Interfaces;
 using Blog.BLL.Services;
 using Blog.Models;
+using PagedList;
 
-namespace Blog3AAA.Controllers
+namespace Blog.WEB.Controllers
 {
-    public class PostController : Controller
+    public class PostController : BaseController
     {
         IServiceCreator service;
         
-        IMapper mapperBusinessToView, mapperViewToBusiness;
-        //private UsersModel db = new UsersModel();
         public PostController()
         {
             service = new ServiceCreator("Blog");
-            
-            
-            var config = new MapperConfiguration(cfg =>
-            {
-                cfg.CreateMap<BlogDTO, BlogModel>();
-                cfg.CreateMap<PostDTO, PostModel>();
-                cfg.CreateMap<UserDTO, UserModel>();
-                cfg.CreateMap<CommentDTO, CommentModel>();
-                cfg.CreateMap<TagDTO, TagModel>();
-            });
-            config.AssertConfigurationIsValid();
-            mapperBusinessToView = config.CreateMapper();
-
-            config = new MapperConfiguration(cfg =>
-            {
-                cfg.CreateMap<BlogModel, BlogDTO>();
-                cfg.CreateMap<PostModel, PostDTO>();
-                cfg.CreateMap<UserModel, UserDTO>();
-                cfg.CreateMap<CommentModel, CommentDTO>();
-                cfg.CreateMap<TagModel, TagDTO>();
-            });
-            config.AssertConfigurationIsValid();
-            mapperViewToBusiness = config.CreateMapper();
             ViewBag.PageSize = pageSize;
-
-            
         }
 
         int pageSize = 2; 
@@ -60,7 +34,7 @@ namespace Blog3AAA.Controllers
             {
                 var p = service.postService.GetByBlogId((int)blogId);
                 posts = mapperBusinessToView.Map<IEnumerable<PostModel>>(p);
-                return View(posts);
+                return View(posts.ToPagedList(page, pageSize));
             }
             if (tagId != null)
             {
@@ -69,10 +43,10 @@ namespace Blog3AAA.Controllers
 
                 var p = service.postService.GetByTagId((int)tagId);
                 posts = mapperBusinessToView.Map<IEnumerable<PostModel>>(p);
-                return View(posts);
+                return View(posts.ToPagedList(page,pageSize));
             }
 
-            return View(new List<PostModel>());
+            return View("Error");
         }
 
         // GET: Post/Details/5
@@ -92,6 +66,7 @@ namespace Blog3AAA.Controllers
         }
 
         // GET: Post/Create
+        [Authorize]
         public ActionResult Create()
         {
             IEnumerable<BlogDTO> b = service.blogService.GetByName(User.Identity.Name);
@@ -114,6 +89,7 @@ namespace Blog3AAA.Controllers
         }
 
         // GET: Post/Edit/5
+        [Authorize]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -129,9 +105,6 @@ namespace Blog3AAA.Controllers
             return View(post);
         }
 
-        // POST: Post/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "ID,Title,DateTime,Body,BlogID")] PostModel post)
@@ -155,6 +128,7 @@ namespace Blog3AAA.Controllers
             return View();
         }
         // GET: Post/Delete/5
+        [Authorize]
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -171,6 +145,7 @@ namespace Blog3AAA.Controllers
         }
 
         // POST: Post/Delete/5
+        [Authorize]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
@@ -178,6 +153,7 @@ namespace Blog3AAA.Controllers
             service.postService.Delete(id);
             return RedirectToAction("Index", "Blogs");
         }
+        [Authorize]
         [HttpPost, ActionName("DeleteComment")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteCommentConfirmed(int id, int postID)
@@ -193,7 +169,6 @@ namespace Blog3AAA.Controllers
                 service.postService.Dispose();
                 service.blogService.Dispose();
                 //postService.Dispose(disposing);
-
             }
             base.Dispose(disposing);
         }

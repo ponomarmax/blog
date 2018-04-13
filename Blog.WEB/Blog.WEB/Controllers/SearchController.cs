@@ -11,38 +11,13 @@ using System.Web.Mvc;
 
 namespace Blog.WEB.Controllers
 {
-    public class SearchController : Controller
+    public class SearchController : BaseController
     {
         IServiceCreator service;
 
-        IMapper mapperBusinessToView, mapperViewToBusiness;
-        //private UsersModel db = new UsersModel();
         public SearchController()
         {
             service = new ServiceCreator("Blog");
-
-
-            var config = new MapperConfiguration(cfg =>
-            {
-                cfg.CreateMap<BlogDTO, BlogModel>();
-                cfg.CreateMap<PostDTO, PostModel>();
-                cfg.CreateMap<UserDTO, UserModel>();
-                cfg.CreateMap<CommentDTO, CommentModel>();
-                cfg.CreateMap<TagDTO, TagModel>();
-            });
-            config.AssertConfigurationIsValid();
-            mapperBusinessToView = config.CreateMapper();
-
-            config = new MapperConfiguration(cfg =>
-            {
-                cfg.CreateMap<BlogModel, BlogDTO>();
-                cfg.CreateMap<PostModel, PostDTO>();
-                cfg.CreateMap<UserModel, UserDTO>();
-                cfg.CreateMap<CommentModel, CommentDTO>();
-                cfg.CreateMap<TagModel, TagDTO>();
-            });
-            config.AssertConfigurationIsValid();
-            mapperViewToBusiness = config.CreateMapper();
         }
         // GET: Search
         public ActionResult Index(string word,int page=1)
@@ -59,6 +34,7 @@ namespace Blog.WEB.Controllers
             var posts = mapperBusinessToView.Map<List<PostModel>>(postsDTO);
             ViewBag.PageSize = pageSize;
             ViewBag.Page = page;
+            ViewBag.Search = word;
             return View("Index",posts);
         }
         int pageSize = 3;

@@ -3,16 +3,12 @@
 
 @model IEnumerable<Blog.Models.PostModel>
 
-@{
-    ViewBag.Title = "Posts";
-}
-
-
-
 @if (Model != null && Model.Count() != 0)
 {
+
     <h4><small>RESULT BY SEARCH: @ViewBag.Search</small></h4>
-    @Html.Partial("ListPost", Model.ToPagedList((int)ViewBag.Page, (int)ViewBag.PageSize))
+    @Html.Partial("DisplayPost", Model)
+    
 }
 else
 {

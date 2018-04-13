@@ -13,7 +13,7 @@ using Blog.DAL.Repositories;
 
 namespace Blog.BLL.Services
 {
-    public class UserService :Service, IUserService
+    public class UserService : Service, IUserService
     {
         public UserService(IUnitOfWork unitOfWork) : base(unitOfWork)
         {
@@ -31,7 +31,6 @@ namespace Blog.BLL.Services
                 // создаем профиль клиента
                 await Database.SaveAsync();
                 return new OperationDetails(true, "Регистрация успешно пройдена", "");
-
             }
             else
             {
@@ -95,27 +94,31 @@ namespace Blog.BLL.Services
             return users;
         }
 
-        public void BlockUnblock(string id)
+        public OperationDetails BlockUnblock(string id)
         {
             if (id == null || id == "")
                 throw new NullReferenceException("id");
             User user = Database.userRepository.FindById(id);
+            if (user == null)
+                return new OperationDetails(false, "User with this id is not found", "id");
             user.Blocked = !user.Blocked;
-            Database.userRepository.Update(user);
+            var result = Database.userRepository.Update(user);
+            if (result.Succeeded)
+                return new OperationDetails(result.Succeeded, "User successfully blocked/unblocked", "");
+            return new OperationDetails(result.Succeeded, String.Join("\n", result.Errors), "");
+
         }
         public void Modify(UserDTO user)
         {
             if (user == null)
                 throw new NullReferenceException("user");
-
-
             User userDB = Database.userRepository.FindById(user.Id);
-            userDB.Photo=user.Photo;
+            userDB.Photo = user.Photo;
             Database.userRepository.Update(userDB);
             Database.Save();
         }
 
-       
+
     }
 
 

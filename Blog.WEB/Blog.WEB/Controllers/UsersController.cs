@@ -15,41 +15,14 @@ using System.Web.Mvc;
 
 namespace Blog.WEB.Controllers
 {
-    public class UsersController : Controller
+    public class UsersController : BaseController
     {
         IServiceCreator service;
-        IMapper mapperBusinessToView, mapperViewToBusiness;
         int pageNumber = 1;
         int pageSize = 3;
         public UsersController()
         {
             service = new ServiceCreator("Blog");
-
-            var config = new MapperConfiguration(cfg =>
-            {
-                cfg.CreateMap<BlogDTO, BlogModel>();
-                cfg.CreateMap<PostDTO, PostModel>();
-                cfg.CreateMap<UserDTO, UserModel>();
-                cfg.CreateMap<CommentDTO, CommentModel>();
-                cfg.CreateMap<TagDTO, TagModel>();
-            });
-            config.AssertConfigurationIsValid();
-            mapperBusinessToView = config.CreateMapper();
-
-            config = new MapperConfiguration(cfg =>
-            {
-                cfg.CreateMap<BlogModel, BlogDTO>();
-                cfg.CreateMap<PostModel, PostDTO>();
-                cfg.CreateMap<UserModel, UserDTO>();
-                cfg.CreateMap<CommentModel, CommentDTO>();
-                cfg.CreateMap<TagModel, TagDTO>();
-            });
-            config.AssertConfigurationIsValid();
-            mapperViewToBusiness = config.CreateMapper();
-
-            //mapperBusinessToView = new MapperConfiguration(cfg => cfg.CreateMap<PostDTO, PostModel>()).CreateMapper();
-            //mapperBlog = new MapperConfiguration(cfg => cfg.CreateMap<BlogDTO, BlogModel>()).CreateMapper();
-            //mapperViewToBusiness = new MapperConfiguration(cfg => cfg.CreateMap<PostModel, PostDTO>()).CreateMapper();
         }
         // GET: Users
         public ActionResult Index()
@@ -58,6 +31,8 @@ namespace Blog.WEB.Controllers
             return View("ListUsers", mapperBusinessToView.Map<IEnumerable<UserModel>>(users).ToPagedList(pageNumber, pageSize));
         }
 
+
+       [Authorize(Roles = "admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult BlockUnblockUser(string id)
@@ -101,6 +76,7 @@ namespace Blog.WEB.Controllers
         //}
 
         // GET: Users/Edit/5
+        [Authorize(Roles = "admin")]
         public ActionResult Edit(string id)
         {
             if (id == null || id == "")
@@ -125,6 +101,7 @@ namespace Blog.WEB.Controllers
         }
 
         // POST: Users/Edit/5
+        [Authorize(Roles = "admin")]
         [HttpPost]
         public ActionResult Edit(UserModel user, string[] selectedRoles, HttpPostedFileBase uploadImage)
         {
@@ -152,12 +129,14 @@ namespace Blog.WEB.Controllers
         }
 
         // GET: Users/Delete/5
+        [Authorize(Roles = "admin")]
         public ActionResult Delete(int id)
         {
             return View();
         }
 
         // POST: Users/Delete/5
+        [Authorize(Roles = "admin")]
         [HttpPost]
         public ActionResult Delete(int id, FormCollection collection)
         {

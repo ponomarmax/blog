@@ -12,13 +12,15 @@ using System.Threading.Tasks;
 
 namespace Blog.BLL.Services
 {
-    public class BlogService :Service, IBlogService
+    public class BlogService : Service, IBlogService
     {
         public BlogService(IUnitOfWork unitOfWork) : base(unitOfWork) { }
 
-        public void  Create(BlogDTO blog)
+        public void Create(BlogDTO blog)
         {
-            User user = Database.userRepository.Users.Where(u=>u.Email==blog.BlogerEmail).First();
+            if (blog.BlogerEmail == null)
+                throw new NullReferenceException("Bloger email is missing");
+            User user = Database.userRepository.Users.Where(u => u.Email == blog.BlogerEmail).First();
             blog.BlogerID = user.Id;
             Database.blogRepository.Create(mapperBusinessToDB.Map<Blogs>(blog));
         }
@@ -31,10 +33,10 @@ namespace Blog.BLL.Services
         public BlogDTO Get(int? id)
         {
             if (id == null)
-                throw new Exception("Не установлено id телефона");
+                throw new NullReferenceException("id missing");
             Blogs blog = Database.blogRepository.Get(id.Value);
             if (blog == null)
-                throw new Exception("Телефон не найден");
+                throw new Exception("Blog is not found");
 
             return mapperDBToBusiness.Map<BlogDTO>(blog);
         }

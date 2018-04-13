@@ -14,7 +14,7 @@ namespace Blog.BLL.Interfaces
         IEnumerable<UserDTO> GetAll();
         UserDTO GetByName(string name);
         UserDTO GetById(string id);
-        void BlockUnblock(string id);
+        OperationDetails BlockUnblock(string id);
         Task<ClaimsIdentity> Authenticate(UserDTO userDto);
         void Modify(UserDTO user);
         

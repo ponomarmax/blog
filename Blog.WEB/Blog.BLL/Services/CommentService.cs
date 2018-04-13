@@ -20,6 +20,8 @@ namespace Blog.BLL.Services
 
         public void Create(CommentDTO comment)
         {
+            if (comment == null)
+                throw new NullReferenceException("comment");
             Database.commentRepository.Create(mapperBusinessToDB.Map<Comments>(comment));
         }
 
@@ -36,18 +38,18 @@ namespace Blog.BLL.Services
         public CommentDTO Get(int? id)
         {
             if (id == null)
-                throw new Exception("Не установлено id коментарря");
+                throw new NullReferenceException("Id is missing");
             Comments comment = Database.commentRepository.Get(id.Value);
             if (comment == null)
-                throw new Exception("коментарь  не найден");
+                throw new Exception("Comment is missing");
 
             return mapperDBToBusiness.Map<CommentDTO>(comment);
         }
 
         public IEnumerable<CommentDTO> GetAll(int postId)
         {
-            var mapper = new MapperConfiguration(cfg => cfg.CreateMap<Comments, CommentDTO>()).CreateMapper();
-            return mapper.Map<IEnumerable<Comments>, List<CommentDTO>>(Database.commentRepository.GetAll(postId));
+            //var mapper = new MapperConfiguration(cfg => cfg.CreateMap<Comments, CommentDTO>()).CreateMapper();
+            return mapperDBToBusiness.Map<IEnumerable<Comments>, List<CommentDTO>>(Database.commentRepository.GetAll(postId));
         }
 
         public void Modify(CommentDTO post)

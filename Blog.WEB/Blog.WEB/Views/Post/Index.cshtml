@@ -1,17 +1,43 @@
-﻿@using Blog.Controllers
-@using PagedList
-
-@model IEnumerable<Blog.Models.PostModel>
+﻿@using PagedList.Mvc
+@model PagedList.IPagedList<Blog.Models.PostModel>
 
 @{
     ViewBag.Title = "Posts";
 }
+@if (ViewBag.tag == "tag")
+{
+    <h4><small>POSTS BY CHOOSING TAG</small></h4>
+}
+else
+{
+    <h4><small>RECENT POSTS</small></h4>
+}
 
-<h4><small>RECENT POSTS</small></h4>
 
 @if (Model != null && Model.Count() != 0)
 {
-    @Html.Partial("ListPost", Model.ToPagedList((int)ViewBag.Page, (int)ViewBag.PageSize))
+    @Html.Partial("DisplayPost", Model)
+    <hr />
+
+    <div class="row">
+        @if (ViewBag.PageSize <= Model.Count())
+        {
+            <div class="pager">
+                @if (ViewBag.tag == "tag")
+                {
+                    @Html.PagedListPager(Model,
+                                       page => Url.Action("Index", new { page = page, tagId = ViewBag.tagId }),
+                                       PagedListRenderOptions.PageNumbersOnly)
+                }
+                else
+                {
+                    @Html.PagedListPager(Model,
+                                       page => Url.Action("Index", new { page = page, blogId = Model.ElementAt(0).Blog.ID }),
+                                       PagedListRenderOptions.PageNumbersOnly)
+                }
+            </div>
+        }
+    </div>
 }
 
 

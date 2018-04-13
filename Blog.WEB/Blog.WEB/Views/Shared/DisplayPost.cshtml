@@ -1,0 +1,20 @@
+﻿@model IEnumerable<Blog.Models.PostModel>
+@{
+    ViewBag.RangeColor = new string[] { "danger", "primary", "info", "success", "warning", "default" };
+    ViewBag.rand = new Random();
+}
+@foreach (var item in Model)
+{
+    <h2>@Html.ActionLink(item.Title, "Details", new { id = item.ID })</h2>
+    <h5><span class="glyphicon glyphicon-time"></span> Post by @item.Blog.Bloger.UserName, on @item.DateTime.Month @item.DateTime.Day, @item.DateTime.Year.</h5>
+    <h5>
+        @foreach (var tag in item.Tags)
+        {
+            <span class="label label-@ViewBag.RangeColor[ViewBag.rand.Next(5)]">@Html.ActionLink(@tag.Tag, "Index", new { tagId = tag.ID })</span>
+        }
+    </h5>
+    <br>
+    <p>@Html.DisplayFor(modelItem => item.ShortBody)</p>
+    <p>@Html.ActionLink("Read More ->", "Details", new { id = item.ID }, new { @class = "btn btn-primary glyphicon-arrow-right" })</p>
+    <br><br>
+}

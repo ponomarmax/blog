@@ -15,9 +15,7 @@ namespace Blog.BLL.Services
 {
     public class RoleService :Service, IRoleService
     {
-        public RoleService(IUnitOfWork unitOfWork) : base(unitOfWork)
-        {
-        }
+        public RoleService(IUnitOfWork unitOfWork) : base(unitOfWork) { }
 
         public List<string> GetRoles(string id)
         {
@@ -26,21 +24,19 @@ namespace Blog.BLL.Services
                 throw new Exception("User is not find");
             List<string> roles = new List<string>();
             foreach (var role in user.Roles)
-            {
                 roles.Add(Database.roleRepository.FindById(role.RoleId).Name);
-            }
+            
             return roles;
         }
 
         public OperationDetails UpdateListRoles(string[] changedRoles, string userId)
         {
             if (changedRoles == null)
-            {
                 return new OperationDetails(false, "You have empty user's roles", "changedRoles");
-            }
+
             User user =  Database.userRepository.FindById(userId);
             if (user == null)
-                return new OperationDetails(false, "User is not find", "changedRoles");
+                return new OperationDetails(false, "User is not find", "userId");
             user.Roles.Clear();
             Database.Save();
             var roles = Database.roleRepository.Roles;
@@ -72,9 +68,7 @@ namespace Blog.BLL.Services
         {
             List<string> roles = new List<string>();
             foreach (var item in Database.roleRepository.Roles)
-            {
                 roles.Add(item.Name);
-            }
             return roles;
         }
 

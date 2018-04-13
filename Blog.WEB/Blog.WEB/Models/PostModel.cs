@@ -16,6 +16,7 @@ namespace Blog.Models
         [StringLength(256)]
         public string Title { get; set; }
 
+        public string ShortBody { get; set; }
         [Required]
         public string Body { get; set; }
 

@@ -2,11 +2,18 @@
 
 @{
     ViewBag.Title = Model.Title;
+    ViewBag.RangeColor = new string[] { "danger", "primary", "warning", "default" };
+    ViewBag.rand = new Random();
 }
 <div>
     <h2>@Model.Title</h2>
     <h5><span class="glyphicon glyphicon-time"></span> Post by @Model.Blog.Bloger.UserName, on @Model.DateTime.Month @Model.DateTime.Day, @Model.DateTime.Year.</h5>
-    <h5><span class="label label-danger">Food</span> <span class="label label-primary">Ipsum</span></h5><br>
+    <h5>
+        @foreach (var tag in Model.Tags)
+        {
+            <span class="label label-@ViewBag.RangeColor[ViewBag.rand.Next(3)]">@Html.ActionLink(@tag.Tag, "Index", new { tagId = tag.ID })</span>
+        }
+    </h5>
     <p>@Html.DisplayFor(modelItem => Model.Body)</p>
 </div>
 @if (Model.Blog.Bloger.UserName == User.Identity.Name)
@@ -17,27 +24,30 @@
         @Html.ActionLink("Back to List", "Index", new { blogId = Model.BlogID }, new { @class = "btn btn-primary" })
     </div>
 }
-
-<hr />
-<br /><br />
-<h4>Leave a Comment:</h4>
-@using (Html.BeginForm("AddComment", "Post", FormMethod.Post))
+@if (User.Identity.IsAuthenticated)
 {
-    @Html.AntiForgeryToken()
-    <div class="form-horizontal">
-        <hr />
-        <div class="form-group">
-            <div class="col-md-10">
-                @Html.TextArea("Body", "", 3, 100, new { htmlAttributes = new { @class = "form-control" } })
+    <hr />
+    <br /><br />
+    <h4>Leave a Comment:</h4>
+    using (Html.BeginForm("AddComment", "Post", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        <div class="form-horizontal">
+            <hr />
+            <div class="form-group">
+                <div class="col-md-10">
+                    @Html.TextArea("Body", "", 3, 100, new { htmlAttributes = new { @class = "form-control" } })
+                </div>
             </div>
+            @Html.Hidden("DateTime", DateTime.Now)
+            @Html.Hidden("UserID", Model.Blog.BlogerID)
+            @Html.Hidden("PostID", Model.ID)
+            <button type="submit" class="btn btn-success">Submit</button>
         </div>
-        @Html.Hidden("DateTime", DateTime.Now)
-        @Html.Hidden("UserID", Model.Blog.BlogerID)
-        @Html.Hidden("PostID", Model.ID)
-        <button type="submit" class="btn btn-success">Submit</button>
-    </div>
+    }
 }
-<br>
+    <br>
+
 
 <p><span class="glyphicon glyphicon-comment"></span><span></span> Comments:</p>
 
@@ -47,7 +57,7 @@
         <div class="row panel-footer">
             <div class="col-sm-2 text-center">
                 @Html.Raw("<img class='img-rounded img-thumbnail' src=\"data:image/jpeg;base64,"
-                                                                                          + Convert.ToBase64String(Model.Blog.Bloger.Photo) + "\" />")
+                                                                                                      + Convert.ToBase64String(Model.Blog.Bloger.Photo) + "\" />")
             </div>
             <div class="col-sm-10">
                 <h4><small>@comment.User.UserName, on @comment.DateTime.Date @*@comment.DateTime.Day, @comment.DateTime.Year*@</small></h4>
@@ -57,3 +67,4 @@
         </div>
     }
 </div>
+

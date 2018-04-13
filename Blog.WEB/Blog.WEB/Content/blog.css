@@ -8,6 +8,12 @@
 body {
     padding-top: 0px;
 }
+.text_red {
+    color: #F00;
+}
+span > a {
+    color: white !important;
+}
 /* Set black background color, white text and some padding */
 footer {
     background-color: #555;

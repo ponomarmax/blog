@@ -20,7 +20,8 @@ namespace Blog.BLL.Services
 
         public void Create(PostDTO post,string tags)
         {
-            
+            if (post == null)
+                throw new NullReferenceException("post");
             if (tags != null && tags != "")
             {
                 string[] tempTags = tags.Split(' ');
@@ -40,26 +41,24 @@ namespace Blog.BLL.Services
         public PostDTO Get(int? id)
         {
             if (id == null)
-                throw new Exception("Не установлено id телефона");
+                throw new NullReferenceException("id is missing");
             Posts post = Database.postRepository.Get(id.Value);
             if (post == null)
-                throw new Exception("Телефон не найден");
+                throw new Exception("Post is missing");
 
             return mapperDBToBusiness.Map<PostDTO>(post);
         }
 
         public IEnumerable<PostDTO> GetByBlogId()
         {
-            var mapper = new MapperConfiguration(cfg => cfg.CreateMap<Posts, PostDTO>()).CreateMapper();
-            return mapper.Map<IEnumerable<Posts>, List<PostDTO>>(Database.postRepository.GetAll());
+          //  var mapper = new MapperConfiguration(cfg => cfg.CreateMap<Posts, PostDTO>()).CreateMapper();
+            return mapperDBToBusiness.Map<IEnumerable<Posts>, List<PostDTO>>(Database.postRepository.GetAll());
         }
 
         public void Modify(PostDTO postDTO)
         {
             if (postDTO == null)
-            {
-                throw new ArgumentException("post");
-            }
+                throw new NullReferenceException("post");
             Posts post = mapperBusinessToDB.Map<Posts>(postDTO);
             Database.postRepository.Modify(post);
         }
